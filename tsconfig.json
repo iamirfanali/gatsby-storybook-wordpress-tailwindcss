@@ -16,5 +16,5 @@
       "@hooks/*": ["src/hooks/*"]
     }
   },
-  "include": ["./src/**/*"]
+  "include": ["./src/**/*", "*.d.ts"]
 }

@@ -1,6 +1,11 @@
 /**
  * @type {import('gatsby').GatsbyConfig}
  */
+
+require("dotenv").config({
+  path: `.env`,
+})
+
 module.exports = {
   siteMetadata: {
     title: `Gatsby, Wordpress, Storybook & TailwindCSS`,
@@ -51,6 +56,12 @@ module.exports = {
         useMinify: true,
         usePreload: true,
         usePreconnect: false,
+      },
+    },
+    {
+      resolve: `gatsby-source-wordpress`,
+      options: {
+        url: process.env.WORDPRESS_URL,
       },
     },
     `gatsby-plugin-image`,

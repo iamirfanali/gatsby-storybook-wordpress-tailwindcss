@@ -1,10 +1,11 @@
+import { GatsbyImage, IGatsbyImageData } from "gatsby-plugin-image"
 import React, { FC } from "react"
 
 export interface TabProps {
   label: string
   active: boolean
   onClick: () => void
-  leftIcon?: React.ReactNode
+  leftIcon?: IGatsbyImageData
   rightIcon?: React.ReactNode
   className?: string
 }
@@ -22,7 +23,15 @@ const Tab: FC<TabProps> = ({
     ${className} ${active ? "bg-zinc-800 bg-opacity-45" : ""} `}
     onClick={onClick}
   >
-    {leftIcon && <span className="mr-8">{leftIcon}</span>}
+    {leftIcon && (
+      <span className="mr-8">
+        <GatsbyImage
+          className="w-auto"
+          image={leftIcon}
+          alt={`${label} Icon`}
+        />
+      </span>
+    )}
     <span>{label}</span>
     {rightIcon && (
       <span

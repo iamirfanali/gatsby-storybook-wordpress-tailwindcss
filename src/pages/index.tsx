@@ -1,123 +1,111 @@
+import { graphql, PageProps } from "gatsby"
+import { getImage } from "gatsby-plugin-image"
 import React from "react"
 
-import Case, { CaseProps } from "@components/Organisms/Case"
-import { CarIcon } from "@icons/components"
+import Case, { Tabs } from "@components/Organisms/Case"
 
-// @todo: need to remove after worpress integration
-const data: CaseProps = {
-  title: "CASES",
-  subTitle: {
-    label: "THAT WE HANDLE",
-    icon: <CarIcon color="black" width={62} height={25} />,
-  },
-  tabs: [
-    {
-      label: "Tab 1",
-      icon: <CarIcon width={62} height={25} />,
-      subTitle: "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
-      image: "https://picsum.photos/1500",
-      summary:
-        "Our Philadelphia auto accident attorney team is prepared to do whatever it takes to help you get fair compensation after an auto accident. Being in a car accident is an unexpected event that can throw your life into disarray especially if you are suffering from an injury due to another person’s mistake. When you’re hurt in a car accident, you need an aggressive legal team that tediously pours over the details until you get the compensation that you need and deserve.",
-      cta: [
-        {
-          variant: "outline",
-          href: "https://google.com",
-          label: "Learn More",
-        },
-        {
-          variant: "filled",
-          href: "https://google.com",
-          label: "Free Evaluation",
-        },
-      ],
-    },
-    {
-      label: "Tab 2",
-      icon: <CarIcon width={62} height={25} />,
-      subTitle: "Auf dem letzten Hause eines kleinen Dörfchens",
-      image: "https://picsum.photos/800",
-      summary:
-        "Our Philadelphia auto accident attorney team is prepared to do whatever it takes to help you get fair compensation after an auto accident. Being in a car accident is an unexpected event that can throw your life into disarray especially if you are suffering from an injury due to another person’s mistake. When you’re hurt in a car accident, you need an aggressive legal team that tediously pours over the details until you get the compensation that you need and deserve.",
-      cta: [
-        {
-          variant: "outline",
-          href: "https://google.com",
-          label: "Learn More",
-        },
-        {
-          variant: "filled",
-          href: "https://google.com",
-          label: "Free Evaluation",
-        },
-      ],
-    },
-    {
-      label: "Tab 3",
-      icon: <CarIcon width={62} height={25} />,
-      subTitle: "Auf dem letzten Hause eines kleinen Dörfchens",
-      image: "https://picsum.photos/2500",
-      summary:
-        "Our Philadelphia auto accident attorney team is prepared to do whatever it takes to help you get fair compensation after an auto accident. Being in a car accident is an unexpected event that can throw your life into disarray especially if you are suffering from an injury due to another person’s mistake. When you’re hurt in a car accident, you need an aggressive legal team that tediously pours over the details until you get the compensation that you need and deserve.",
-      cta: [
-        {
-          variant: "outline",
-          href: "https://google.com",
-          label: "Learn More",
-        },
-        {
-          variant: "filled",
-          href: "https://google.com",
-          label: "Free Evaluation",
-        },
-      ],
-    },
-    {
-      label: "Tab 4",
-      icon: <CarIcon width={62} height={25} />,
-      subTitle: "Auf dem letzten Hause eines kleinen Dörfchens",
-      image: "https://picsum.photos/700",
-      summary:
-        "Integer commodo ante eu tempor tincidunt. Aenean feugiat imperdiet felis, id vehicula magna condimentum at. Morbi mattis lectus tortor, et rhoncus dolor pretium vel. Fusce eget ipsum blandit, luctus tellus vitae, imperdiet nisi. Morbi tincidunt euismod quam non feugiat. Sed ultrices est eget placerat placerat. Nulla dictum nisi ac aliquam consequat. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Nunc dignissim tristique tempor. Quisque varius condimentum congue. Donec diam ipsum, suscipit eget aliquet dapibus, iaculis vel leo. Proin non egestas dui. Nam at lobortis magna, eget ultrices mi. Nunc est massa, sagittis sit amet tortor a, ultricies malesuada nibh.",
-      cta: [
-        {
-          variant: "outline",
-          href: "https://google.com",
-          label: "Learn More",
-        },
-        {
-          variant: "filled",
-          href: "https://google.com",
-          label: "Free Evaluation",
-        },
-      ],
-    },
-    {
-      label: "Tab 5",
-      icon: <CarIcon width={62} height={25} />,
-      subTitle: "Auf dem letzten Hause eines kleinen Dörfchens",
-      image: "https://picsum.photos/800",
-      summary:
-        "Nunc posuere nulla et porta pulvinar. Nullam congue mollis justo, eget viverra odio condimentum in. Ut rutrum ipsum felis, eu consequat dolor efficitur quis. Nulla pharetra dapibus diam, et cursus leo suscipit et. Mauris at fringilla erat, a rhoncus arcu. Pellentesque ullamcorper ipsum ac lacus malesuada, id euismod elit tristique. In blandit vel lectus id varius. Sed hendrerit pharetra fringilla. Nulla consequat, felis at eleifend maximus, felis elit mollis purus, a aliquet sapien sem nec nisi. Nulla luctus id augue sed bibendum. Suspendisse potenti. Suspendisse potenti. Vestibulum libero orci, mattis et metus eu, consectetur rhoncus ante.",
-      cta: [
-        {
-          variant: "outline",
-          href: "https://google.com",
-          label: "Learn More",
-        },
-        {
-          variant: "filled",
-          href: "https://google.com",
-          label: "Free Evaluation",
-        },
-      ],
-    },
-  ],
+import { Query } from "../generated/graphql-types"
+
+const IndexPage: React.FC<
+  PageProps<Pick<Query, "allWpPage" | "allWpCase">>
+> = ({ data }) => {
+  const caseSection = data.allWpPage.nodes[0].pageSections?.section?.[0]
+  const tabsData = data.allWpCase.nodes
+
+  const tabs: Tabs[] = tabsData.map(tab => ({
+    label: tab.title,
+    subtitle: tab.subTitle,
+    summary: tab.excerpt,
+    cta: tab.callToActions?.cta,
+    icon: getImage(tab.icon?.icon?.localFile?.childImageSharp?.gatsbyImageData),
+    image: getImage(
+      tab.featuredImage?.node.localFile?.childImageSharp?.gatsbyImageData
+    ),
+  })) as unknown as Tabs[]
+
+  return (
+    <div className="my-10">
+      <Case
+        title={caseSection?.title ?? ""}
+        subTitle={{
+          label: caseSection?.subtitle?.label ?? "",
+          icon: getImage(
+            caseSection?.subtitle?.icon?.localFile?.childImageSharp
+              ?.gatsbyImageData
+          ),
+        }}
+        tabs={tabs}
+      />
+    </div>
+  )
 }
 
-const IndexPage = () => (
-  <div className="my-10">
-    <Case title={data.title} subTitle={data.subTitle} tabs={data.tabs} />
-  </div>
-)
+export const PageQuery = graphql`
+  query HomePageQuery {
+    allWpPage(filter: { title: { eq: "Home Page" } }) {
+      nodes {
+        pageSections {
+          section {
+            ...PageSectionsFragment
+          }
+        }
+      }
+    }
+    allWpCase(limit: 5) {
+      nodes {
+        title
+        subTitle {
+          label
+        }
+        excerpt
+        featuredImage {
+          node {
+            localFile {
+              childImageSharp {
+                gatsbyImageData(width: 500, placeholder: BLURRED)
+              }
+            }
+            title
+          }
+        }
+        icon {
+          icon {
+            localFile {
+              childImageSharp {
+                gatsbyImageData(width: 30, placeholder: BLURRED)
+              }
+            }
+            title
+          }
+        }
+        callToActions {
+          cta {
+            ...CtaFragment
+          }
+        }
+      }
+    }
+  }
+
+  fragment PageSectionsFragment on WpPage_Pagesections_Section_AddSection {
+    title
+    subtitle {
+      label
+      icon {
+        localFile {
+          childImageSharp {
+            gatsbyImageData(width: 25, placeholder: BLURRED)
+          }
+        }
+      }
+    }
+  }
+
+  fragment CtaFragment on WpCase_Calltoactions_Cta_AddCta {
+    href
+    label
+    variant
+  }
+`
 
 export default IndexPage

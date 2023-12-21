@@ -21,6 +21,7 @@ A small project covering various aspects of ATOM design principles and some best
 - TypeScript
 - Storybook
 - ESLint
+- `gatsby-source-wordpress`
 - Node.js (version 20.5.0 as per the project's requirements)
 
 ### Installing
@@ -31,10 +32,24 @@ Install the dependencies:
 npm install
 ```
 
+### Wordpress Integration
+
+Rename `.env.example` to `.env` and add your wordpress graphl endpoint
+
+```sh
+WORDPRESS_URL=
+```
+
 ### Executing Program
 
 ```sh
 npm run develop
+```
+
+### Wordpress TypeDef Generation
+
+```sh
+npm run generate-types
 ```
 
 ### Build the project:
