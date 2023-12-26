@@ -29,6 +29,6 @@ export const Default: Story = {
   args: {
     active: true,
     label: "Car Accident",
-    leftIcon: <CarIcon width={62} height={25} />,
+    leftIcon: undefined,
   },
 }

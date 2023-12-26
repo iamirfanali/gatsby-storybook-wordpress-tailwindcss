@@ -10,9 +10,9 @@ export interface ButtonProps {
 
 const variantStyle = {
   filled:
-    "py-2 md:py-3 px-8 sm:px-10 rounded-full bg-red-600 hover:bg-red-700 text-white transition-colors duration-200",
+    "flex items-center py-2 md:py-3 px-8 sm:px-10 rounded-full bg-red-600 hover:bg-red-700 text-white transition-colors duration-200",
   outline:
-    "py-2 md:py-3 px-8 sm:px-10 rounded-full border-2 border-white hover:border-red-600 bg-transparent text-white hover:text-red-600 transition-colors duration-200",
+    "flex items-center py-2 md:py-3 px-8 sm:px-10 rounded-full border-2 border-white hover:border-red-600 bg-transparent text-white hover:text-red-600 transition-colors duration-200",
   transparent: "p-0 bg-transparent text-white",
 }
 
@@ -27,7 +27,9 @@ const Button: FC<ButtonProps> = ({
 
   return (
     <Element
-      className={`cursor-pointer focus:outline-none transition duration-300 ${variantStyle[variant]} ${className}`}
+      className={`text-xs-xl md:text-base 2xl:text-xl cursor-pointer focus:outline-none transition duration-300 ${
+        variantStyle[variant]
+      } ${className ?? ""}`}
       onClick={onClick}
     >
       {children}

@@ -30,15 +30,15 @@ export const Default: Story = {
     tabs: [
       {
         label: "Tab 1",
-        leftIcon: <CarIcon width={62} height={25} />,
+        leftIcon: undefined,
       },
       {
         label: "Tab 2",
-        leftIcon: <CarIcon width={62} height={25} />,
+        leftIcon: undefined,
       },
       {
         label: "Tab 3",
-        leftIcon: <CarIcon width={62} height={25} />,
+        leftIcon: undefined,
       },
     ],
     activeTab: 1,

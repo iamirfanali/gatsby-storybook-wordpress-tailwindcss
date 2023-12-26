@@ -1,5 +1,5 @@
 import { graphql, PageProps } from "gatsby"
-import { getImage } from "gatsby-plugin-image"
+import { getImage, IGatsbyImageData } from "gatsby-plugin-image"
 import React from "react"
 
 import Case, { Tabs } from "@components/Organisms/Case"
@@ -12,15 +12,16 @@ const IndexPage: React.FC<
   const caseSection = data.allWpPage.nodes[0].pageSections?.section?.[0]
   const tabsData = data.allWpCase.nodes
 
-  const tabs: Tabs[] = tabsData.map(tab => ({
+  const tabs = tabsData.map(tab => ({
     label: tab.title,
-    subtitle: tab.subTitle,
-    summary: tab.excerpt,
+    subTitle: tab.subTitle?.label,
+    summary: tab.summary?.summary,
     cta: tab.callToActions?.cta,
     icon: getImage(tab.icon?.icon?.localFile?.childImageSharp?.gatsbyImageData),
     image: getImage(
       tab.featuredImage?.node.localFile?.childImageSharp?.gatsbyImageData
     ),
+    altText: tab.featuredImage?.node.title,
   })) as unknown as Tabs[]
 
   return (
@@ -29,10 +30,13 @@ const IndexPage: React.FC<
         title={caseSection?.title ?? ""}
         subTitle={{
           label: caseSection?.subtitle?.label ?? "",
-          icon: getImage(
-            caseSection?.subtitle?.icon?.localFile?.childImageSharp
-              ?.gatsbyImageData
-          ),
+          icon: {
+            image: getImage(
+              caseSection?.subtitle?.icon?.localFile?.childImageSharp
+                ?.gatsbyImageData
+            ) as IGatsbyImageData,
+            alt: caseSection?.subtitle?.icon?.title ?? "",
+          },
         }}
         tabs={tabs}
       />
@@ -51,13 +55,15 @@ export const PageQuery = graphql`
         }
       }
     }
-    allWpCase(limit: 5) {
+    allWpCase(sort: { orderNumber: { order: ASC } }) {
       nodes {
         title
         subTitle {
           label
         }
-        excerpt
+        summary {
+          summary
+        }
         featuredImage {
           node {
             localFile {
@@ -72,7 +78,7 @@ export const PageQuery = graphql`
           icon {
             localFile {
               childImageSharp {
-                gatsbyImageData(width: 30, placeholder: BLURRED)
+                gatsbyImageData(width: 35, quality: 100, placeholder: BLURRED)
               }
             }
             title
@@ -94,9 +100,10 @@ export const PageQuery = graphql`
       icon {
         localFile {
           childImageSharp {
-            gatsbyImageData(width: 25, placeholder: BLURRED)
+            gatsbyImageData(width: 40, placeholder: BLURRED)
           }
         }
+        title
       }
     }
   }

@@ -2,56 +2,71 @@ import useScreenSize from "@hooks/useScreenSize"
 import { GatsbyImage, IGatsbyImageData } from "gatsby-plugin-image"
 import React, { FC, useState } from "react"
 
-import Button, { ButtonProps } from "@components/Atoms/Button"
 import { TabProps } from "@components/Atoms/Tab"
+import TabContent, { TabContentProps } from "@components/Molecules/TabContent"
 import TabList from "@components/Molecules/TabList"
-import { splitParagraph } from "@utils/splitParagraph"
 
-interface CTA extends Pick<ButtonProps, "variant" | "href"> {
-  label: string
-}
-
-export interface Tabs extends Pick<TabProps, "label"> {
-  summary: string
-  subTitle: string
-  image: IGatsbyImageData
+export interface Tabs
+  extends Pick<TabProps, "label">,
+    Pick<
+      TabContentProps,
+      "label" | "subTitle" | "altText" | "cta" | "image" | "summary"
+    > {
   icon: IGatsbyImageData
-  cta: CTA[]
 }
 
 export interface CaseProps {
   tabs: Tabs[]
   title: string
   subTitle: {
-    icon?: IGatsbyImageData
+    icon: {
+      image: IGatsbyImageData
+      alt: string
+    }
     label?: string
   }
 }
 
+const renderOnScreenSize = ["xxs", "xs", "sm", "md"]
+
 const Case: FC<CaseProps> = ({ title, subTitle, tabs }) => {
   const screenSize = useScreenSize()
   const [activeTab, setActiveTab] = useState(0)
-  const [firstPart, secondPart] = splitParagraph(tabs[activeTab].summary, 30, 8)
+  const isSmallScreen = renderOnScreenSize.includes(screenSize)
 
-  const isSmallScreen = screenSize === "xs" || screenSize === "sm"
+  const renderTabContent = () => (
+    <TabContent
+      label={tabs[activeTab].label}
+      summary={tabs[activeTab].summary}
+      subTitle={tabs[activeTab].subTitle}
+      image={tabs[activeTab].image}
+      altText={tabs[activeTab].altText}
+      cta={tabs[activeTab].cta}
+    />
+  )
 
   return (
-    <section className="container max-w-7xl mx-auto">
+    <section className="container max-w-screen-xl 2xl:max-w-screen-2xl mx-auto">
       <div className="text-center font-bold uppercase mb-14">
-        <h2 className="mb-4 text-6xl md:text-8xl">{title ?? ""}</h2>
-        <div className="flex justify-center items-center gap-2">
+        <h2 className="mb-4 text-6xl md:text-8xl 2xl:text-10xl">
+          {title ?? ""}
+        </h2>
+        <div className="flex justify-center items-center gap-5">
           {subTitle.icon && (
-            <GatsbyImage
-              className="hidden sm:block"
-              image={subTitle.icon}
-              alt=""
-            />
+            <span className="hidden md:block">
+              <GatsbyImage
+                image={subTitle.icon.image}
+                alt={subTitle.icon.alt}
+              />
+            </span>
           )}
-          <p>{subTitle.label ?? ""}</p>
+          <p className="text-xl md:text-2xl 2xl:text-3xl">
+            {subTitle.label ?? ""}
+          </p>
         </div>
       </div>
       <div className="grid grid-cols-1 lg:grid-cols-12">
-        <div className="p-0 sm:px-2 sm:py-3 md:col-span-3 lg:col-span-4 bg-solid-slate">
+        <div className="p-0 lg:px-2 lg:py-3 md:col-span-3 lg:col-span-4 bg-solid-slate">
           <TabList
             tabs={tabs.map(tab => ({
               label: tab.label,
@@ -59,47 +74,10 @@ const Case: FC<CaseProps> = ({ title, subTitle, tabs }) => {
             }))}
             activeTab={activeTab}
             onTabClick={setActiveTab}
+            content={isSmallScreen && renderTabContent()}
           />
         </div>
-        <div className="col-span-8 bg-zinc-800 pt-9 sm:pt-11 pb-12 sm:pb-14 px-6 sm:px-20 text-center text-white overflow-x-hidden lg:overflow-x-visible">
-          <h3 className="mb-5 sm:mb-11 text-4xl font-medium">
-            {tabs[activeTab].label}
-          </h3>
-          <p className="mb-11 sm:mb-10 text-lg font-bold">
-            {tabs[activeTab].subTitle}
-          </p>
-          <div className="flex w-full gap-7 text-left relative">
-            <div className="flex flex-col justify-between w-[58%] sm:w-[70%] min-h-full md:min-h-64">
-              <p
-                className="mb-0 md:mb-6"
-                dangerouslySetInnerHTML={{
-                  __html: !isSmallScreen ? tabs[activeTab].summary : firstPart,
-                }}
-              />
-              <hr className="mt-auto h-1 w-[65%] ml-auto border-t-0 bg-white/[0.22] hidden md:block" />
-            </div>
-            <div className="w-[55%] sm:w-[50%] absolute -right-11 sm:-right-36">
-              <GatsbyImage
-                className="rounded-full"
-                image={tabs[activeTab].image}
-                alt="" //@todo: alts can be added
-              />
-            </div>
-          </div>
-          {isSmallScreen && (
-            <div
-              className="text-left"
-              dangerouslySetInnerHTML={{ __html: secondPart }}
-            />
-          )}
-          <div className="flex justify-center mt-10 sm:mt-11 gap-3 text-xs	md:text-base">
-            {tabs[activeTab].cta.map((item, index) => (
-              <Button key={index} variant={item.variant} href={item.href}>
-                {item.label}
-              </Button>
-            ))}
-          </div>
-        </div>
+        {!isSmallScreen && renderTabContent()}
       </div>
     </section>
   )
